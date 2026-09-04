@@ -21,13 +21,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/<your-github-username>/dsh-md-picker.git"
+    "url": "git+https://github.com/shangfr/dsh-md-picker.git"
   },
-  "homepage": "https://github.com/<your-github-username>/dsh-md-picker#readme",
+  "homepage": "https://github.com/shangfr/dsh-md-picker#readme",
   "bugs": {
-    "url": "https://github.com/<your-github-username>/dsh-md-picker/issues"
+    "url": "https://github.com/shangfr/dsh-md-picker/issues"
   },
-  "author": "<your-github-username>",
+  "author": "shangfr",
   "engines": {
     "node": ">=20"
   },
