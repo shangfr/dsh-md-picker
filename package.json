@@ -1,7 +1,7 @@
 {
   "name": "dsh-md-picker",
   "description": "DeepSeek Harness Web GUI 插件:会话输入框 📎 按钮——图片直传官方附件管线;文本类原样暂存;文档(docx/pptx/xlsx/pdf/rtf/odt/epub/csv…)经本地 anydoc 转为 Markdown 后暂存,消息只插图短回执。Composer picker that converts documents to Markdown.",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "license": "MIT",
   "type": "module",
   "main": "lib/index.js",
@@ -17,7 +17,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node test/convert.test.mjs"
+    "test": "node test/unit.test.mjs && node test/apply-e2e.test.mjs && node test/convert.test.mjs"
   },
   "repository": {
     "type": "git",
