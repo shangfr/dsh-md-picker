@@ -8,7 +8,7 @@ DeepSeek Harness Web GUI 插件：在会话输入框左侧添加一个「文档 
 - **文本类**（`.txt` / `.md` / `.markdown`）→ 读原始字节上传，服务端自动识别编码（BOM / UTF-8 / UTF-16 / GB18030 等）后**统一按 UTF-8** 暂存到**当前工作目录**下的 `md-picker-attachments/`（按 **会话所属 workspace → 最近使用的 workspace** 解析；环境变量 `DSH_MD_PICKER_DIR` 显式覆盖优先；不可用时回退 `~/.dsh/md-picker-attachments/`）
 - **可转换文档**（`.doc/.docx/.docm` `.ppt/.pps/.pot/.pptx/.pptm/.ppsx/.ppsm` `.xls/.xlsx/.xlsm/.xlsb` `.pdf` `.rtf` `.odt/.ods/.odp` `.csv` `.epub`）→ 浏览器读出原始字节 POST 到本地服务端，由 [anydoc](https://github.com/firecrawl/anydoc) 转成 **Markdown** 后落盘
 - **重复上传去重**（SHA-256 内容指纹）→ 同内容仅返回既有路径并标注，不重复落盘
-- **访问安全**（v1.3.0）→ 进程级随机令牌随 client.js 下发，路由缺令牌返回 401；每 IP 每路由速率限制
+- **访问安全（默认开放）** → 鉴权默认关闭，无需令牌即可上传；可选配置 `token` 开启令牌校验（LAN 加固）；每 IP 每路由速率限制
 - **附件目录自保护** → 创建 `md-picker-attachments/` 时自动写入 `.gitignore`（`*`），目录不进 git 工作区
 - **上传进度 & 任意位置拖放** → 文档上传显示百分比；文档可直接拖到输入框任意位置，图片照常走官方管线
 - **其它类型**（如 `.zip`）→ 不静默丢弃，回执会列出「未处理」清单
@@ -26,9 +26,9 @@ DeepSeek Harness Web GUI 插件：在会话输入框左侧添加一个「文档 
 ```
 点击按钮（或直接把文件拖到按钮上）→ <input type="file" multiple>
   ├─ image/*            → DataTransfer + 合成 drop → 官方 ComposerAttachments 接收
-  ├─ .txt/.md/.markdown → POST /dsh-md-picker/store（原始字节 + X-Filename + 令牌 + 可选会话 id）
+  ├─ .txt/.md/.markdown → POST /dsh-md-picker/store（原始字节 + X-Filename + 可选会话 id）
   │                       → 编码探测（BOM/UTF-8/GB18030…）→ SHA-256 去重 → 统一 UTF-8 暂存到工作目录
-  ├─ 可转换文档          → POST /dsh-md-picker/convert（原始字节 + X-Filename + 令牌 + 可选会话 id）
+  ├─ 可转换文档          → POST /dsh-md-picker/convert（原始字节 + X-Filename + 可选会话 id）
   │                       → anydoc 转 Markdown（服务端信号量：同时最多 2 个，其余排队）
   │                       → SHA-256 去重后落盘工作目录 md-picker-attachments/（XHR 上传进度）→ 按钮状态机
   └─ 其它类型            → 回执列出「未处理」清单
@@ -48,7 +48,7 @@ DeepSeek Harness Web GUI 插件：在会话输入框左侧添加一个「文档 
 | 文本类降级 | 暂存接口不可用时自动回退全文内联：单文件 3 万字符 + 多文件合计 6 万字符封顶 |
 | 并发转换 | 服务端信号量：同时最多 2 个 anydoc 进程，其余排队（队列上限 16，超限返回 429） |
 | 重复上传去重 | 同内容（原始字节 SHA-256）仅返回既有路径并标注 duplicate，不重复落盘 |
-| 访问鉴权 | 进程级随机令牌随 client.js 下发，路由缺令牌返回 401；写盘/转换端点不再对 LAN 裸奔 |
+| 访问鉴权 | 默认关闭（无需令牌，便于桌面直连）；可选配置 `token` 后开启令牌校验（写盘/转换端点不再对 LAN 裸奔） |
 | 速率限制 | 每 IP 每路由每分钟上限（`/store` 300、`/convert` 20），超限 429 + `Retry-After` |
 | 附件目录自保护 | 创建 `md-picker-attachments/` 时自动写入 `.gitignore`（`*`），目录不进 git |
 | 原子唯一落盘 | 同毫秒重名自动追加 `-1`/`-2` 后缀，绝不覆盖既有文件 |
