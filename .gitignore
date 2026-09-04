@@ -1,4 +1,5 @@
 node_modules/
+md-picker-attachments/
 *.tgz
 *.log
 .DS_Store
